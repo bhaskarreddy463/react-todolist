@@ -54,11 +54,13 @@ class App extends React.Component {
       items:filteredItems
     })
   }
-  setUpdate(text, key){
+  setUpdate(e){
+    const {value, id} = e.target;
+
     const items = this.state.items;
     items.map(item=>{
-      if(item.key == key){
-        item.text = text;
+      if(item.key == id){
+        item.text = value;
       }
     });
 

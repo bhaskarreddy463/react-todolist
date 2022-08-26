@@ -10,7 +10,7 @@ function ListItems(props){
             <p>
                 <input type="text" value={item.text} id={item.key}
                 onChange={(e)=>{
-                    props.setUpdate(e.target.value, item.key);
+                    props.setUpdate(e);
                 }}
                 />
             <span>
