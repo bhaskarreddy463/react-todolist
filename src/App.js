@@ -1,89 +1,142 @@
-import logo from './logo.svg';
-import './App.css';
-import React from 'react';
-import ListItems from './ListItems';
-import { library } from '@fortawesome/fontawesome-svg-core';
-import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import React, { useState } from 'react';
+import './App.css'
+import FormInputs from './components/forms/FormInputs';
+import ShowList from './ShowList';
+import Solution from './Solution';
 
-library.add(faTrash);
+const App = () => {
 
-class App extends React.Component {
-  constructor(props){
-    super(props);
-    this.state = {
-      items:[],
-      currentItem:{
-        text:'',
-        key:''
-      }
-    }
-    this.handleInput = this.handleInput.bind(this);
-    this.addItem = this.addItem.bind(this);
-    this.deleteItem = this.deleteItem.bind(this);
-    this.setUpdate = this.setUpdate.bind(this);
-  }
+  const menuConfig = [
+    {title:'Home'},
+    {title:'About',subItems:['test1','test1']},
+    {title:'Login',subItems:['login12','login123']}
+  ]
+  const [inputVal, setInputVal] = useState('');
+  const [items, setItems] = useState([]);
+  const [values, setValues] = useState({
+    username: "",
+    email: "",
+    birthday: "",
+    password: "",
+    confirmPassword: "",
+  });
 
-  handleInput(e){
-    this.setState({
-      currentItem:{
-        text:e.target.value,
-        key:Date.now()
-      }
-    });
-  }
+  const inputs = [
+    {
+      id: 1,
+      name: "username",
+      type: "text",
+      placeholder: "Username",
+      errorMessage:
+        "Username should be 3-16 characters and shouldn't include any special character!",
+      label: "Username",
+      pattern: "^[A-Za-z0-9]{3,16}$",
+      required: true,
+    },
+    {
+      id: 2,
+      name: "email",
+      type: "email",
+      placeholder: "Email",
+      errorMessage: "It should be a valid email address!",
+      label: "Email",
+      required: true,
+    },
+    {
+      id: 3,
+      name: "birthday",
+      type: "date",
+      placeholder: "Birthday",
+      label: "Birthday",
+    },
+    {
+      id: 4,
+      name: "password",
+      type: "password",
+      placeholder: "Password",
+      errorMessage:
+        "Password should be 8-20 characters and include at least 1 letter, 1 number and 1 special character!",
+      label: "Password",
+      pattern: `^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,20}$`,
+      required: true,
+    },
+    {
+      id: 5,
+      name: "confirmPassword",
+      type: "password",
+      placeholder: "Confirm Password",
+      errorMessage: "Passwords don't match!",
+      label: "Confirm Password",
+      pattern: values.password,
+      required: true,
+    },
+  ];
 
-  addItem(e){
+  const onSubmit = (e)=>{
+    console.log(e);
     e.preventDefault();
-    const newItem = this.state.currentItem;
-    console.log(newItem);
-    if(newItem.text !== ""){
-      const newItems = [...this.state.items, newItem];
-      this.setState({
-        items:newItems,
-        currentItem:{
-          text:'',
-          key:''
+    const newItems = [...items, {key:Date.now(),text:inputVal, isDone:false}]
+    setItems(newItems);
+    setInputVal('');
+  }
+  const onDeleteFn = (e, deleteItems)=>{
+    console.log(deleteItems);
+    const filteredItems = items.filter((item)=>{
+      return item.key!=deleteItems.key
+    });
+    setItems(filteredItems);
+  }
+
+  const strikeLine = (strikeItem)=>{
+    console.log(strikeItem);
+    const mItems = items.map(item=>{
+        if(item.key==strikeItem.key){
+          item.isDone = !item.isDone
         }
+        return item
       });
-    }
+    
+    setItems(mItems);
   }
 
-  deleteItem(key){
-    const filteredItems = this.state.items.filter(item =>item.key!=key);
-    this.setState({
-      items:filteredItems
-    })
-  }
-  setUpdate(e){
-    const {value, id} = e.target;
-
-    const items = this.state.items;
-    items.map(item=>{
-      if(item.key == id){
-        item.text = value;
+  const StatusMsg = ()=>{
+    let doneItems = 0;
+    items.map((item)=>{
+      if(item.isDone){
+        doneItems +=1;
       }
     });
+    const showmsg = `${doneItems} remaining task out of ${items.length} tasks`;
+    return (<div>
+      {showmsg}
+    </div>);
+  }
 
-    this.setState({
-      items:items
-    });
-  }
-  render(){
-    return (
-      <div className='App'>
-        <header>
-          <form id="to-do-form" onSubmit={this.addItem}>
-            <input type="text" placeholder='Enter Text' value={this.state.currentItem.text} onChange={this.handleInput}/>
-            <button type='submit'>Add</button>
-          </form>
-        </header>
-        <ListItems 
-        deleteItem={this.deleteItem} 
-        setUpdate = {this.setUpdate}
-        items={this.state.items}></ListItems>
-      </div>
-    );
-  }
+  const handleSubmit = (e)=>{
+    e.preventDefault();
+    const data = new FormData(e.target);
+    console.log(data);
+    console.log(Object.fromEntries(data.entries()));
+  };
+  
+  const onChange = (e)=>{
+    const {name, value} = e.target;
+    setValues({...values, [name]:value});
+  };
+
+  console.log(values);
+  return (
+    <div className='App'>
+     <Solution menuConfig={menuConfig}></Solution>
+     {/* {
+      inputs.map((input)=>{
+        return(
+          <FormInputs ></FormInputs>
+        );
+      })
+     } */}
+    </div>
+  )
 }
 
 export default App;

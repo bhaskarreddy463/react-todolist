@@ -3,7 +3,20 @@ body{
 }
 
 .App{
-  background-color: #3f3160;
+  /* background-color: #3f3160; */
+  min-height: 500px;
+  width: 400px;
+  margin: 40px auto;
+  background: linear-gradient(
+    rgba(255,255,255,0.7),
+    rgba(255,255,255,0.3)
+  ),
+   url('https://images.pexels.com/photos/1563356/pexels-photo-1563356.jpeg');
+   background-size: cover;
+   background-position: center;
+}
+
+.App1{
   min-height: 500px;
   width: 400px;
   margin: 40px auto;
@@ -38,4 +51,18 @@ body{
   cursor: pointer;
   font-weight: bolder;
   color: #ffffff;
+}
+
+.delete-button{
+  margin-left: 20px;
+  background: white;
+  width: 100px;
+  height: 30px;
+  border-radius: 5px;
+  outline: none;
+  color: red;
+}
+
+.is-done{
+  text-decoration: line-through;
 }
