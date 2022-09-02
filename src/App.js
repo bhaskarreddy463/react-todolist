@@ -114,9 +114,15 @@ const App = () => {
 
   const handleSubmit = (e)=>{
     e.preventDefault();
-    const data = new FormData(e.target);
-    console.log(data);
-    console.log(Object.fromEntries(data.entries()));
+
+    // with useState
+
+    console.log("handleSubmit",values);
+
+    // without useState
+    // const data = new FormData(e.target);
+    // console.log(data);
+    // console.log(Object.fromEntries(data.entries()));
   };
   
   const onChange = (e)=>{
@@ -126,15 +132,18 @@ const App = () => {
 
   console.log(values);
   return (
-    <div className='App'>
-     <Solution menuConfig={menuConfig}></Solution>
-     {/* {
-      inputs.map((input)=>{
-        return(
-          <FormInputs ></FormInputs>
-        );
-      })
-     } */}
+    <div className='app'>
+     <form onSubmit={handleSubmit}>
+      <h1>Register</h1>
+      {
+        inputs.map((input)=>{
+          return(
+            <FormInputs key={input.id} {...input} value={values[input.name]} onChange={onChange}></FormInputs>
+          );
+        })
+      }
+      <button>Submit</button>
+     </form>
     </div>
   )
 }
