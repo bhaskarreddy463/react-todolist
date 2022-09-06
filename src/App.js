@@ -1,67 +1,52 @@
-import logo from './logo.svg';
-import './App.css';
-import React, { useState } from 'react';
-import ListItems from './ListItems';
-import { library } from '@fortawesome/fontawesome-svg-core';
-import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import React, { useState, useMemo } from 'react';
+import Pagination from './Pagination';
+import data from './data/mock-data.json';
+import './App.scss';
 
-library.add(faTrash);
+let PageSize = 5;
 
-function App (){
-  const [items, setItems] = useState([]);
-  const [currentItem, setCurrentItem] = useState({}); 
+export default function App() {
+  const [currentPage, setCurrentPage] = useState(1);
+  
+  const currentTableData = useMemo(() => {
+    const firstPageIndex = (currentPage - 1) * PageSize;
+    const lastPageIndex = firstPageIndex + PageSize;
+    return data.slice(firstPageIndex, lastPageIndex);
+  }, [currentPage]);
 
-  const handleInput = (e)=>{
-    setCurrentItem({
-      text:e.target.value,
-      key:Date.now()
-    });
-  };
-
-  const addItem = (e) => {
-    e.preventDefault();
-    const newItem = currentItem;
-    console.log(newItem);
-    if(newItem.text !== ""){
-      const newItems = [...items, newItem];
-      setItems(newItems);
-      setCurrentItem({key:'',text:''});
-    }
-  }
-
-  const deleteItem = (key) => {
-    const filteredItems = items.filter(item =>item.key!=key);
-
-    setItems([...filteredItems])
-  }
-  const setUpdate = (e) => {
-    const {value, id} = e.target;
-    items.map(item=>{
-      if(item.key == id){
-        item.text = value;
-      }
-    });
-
-    setItems([...items]);
-
-    // setItems({
-    //   items:items
-    // });
-  }
-    return (
-      <div className='App'>
-        <header>
-          <form id="to-do-form" onSubmit={addItem}>
-            <input type="text" placeholder='Enter Text' value={currentItem.text} onChange={handleInput}/>
-            <button type='submit'>Add</button>
-          </form>
-        </header>
-        <ListItems 
-        deleteItem={deleteItem} 
-        setUpdate = {setUpdate}
-        items={items}></ListItems>
-      </div>
-    );
+  return (
+    <>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>FIRST NAME</th>
+            <th>LAST NAME</th>
+            <th>EMAIL</th>
+            <th>PHONE</th>
+          </tr>
+        </thead>
+        <tbody>
+          {currentTableData.map(item => {
+            return (
+              <tr>
+                <td>{item.id}</td>
+                <td>{item.first_name}</td>
+                <td>{item.last_name}</td>
+                <td>{item.email}</td>
+                <td>{item.phone}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+      <Pagination
+        className="pagination-bar"
+        currentPage={currentPage}
+        totalCount={data.length}
+        pageSize={PageSize}
+        onPageChange={page => setCurrentPage(page)}
+      />
+    </>
+  );
 }
-
-export default App;
